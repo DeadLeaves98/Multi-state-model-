@@ -16,7 +16,7 @@
 #                             Data Cleaning ----
 ##############################################################################
 library(dplyr); library(stringr); library(lubridate); library(tidyr); library(sf)
-nobo1 <- read.csv("Orton_Bobwhite_Telemetry_Data_Entry_0.csv")
+nobo1 <- read.csv("./Orton_Bobwhite_Telemetry_Data_Entry_0.csv")
 head(nobo1)
 nrow(nobo1) # 38810
 
@@ -178,7 +178,7 @@ nobo1 = rbind(nobo1, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t,
 
 head(nobo1)
 unique(nobo1$Bird.Status)
-lookuptable1 <- read.csv("E:/NOBO R Projects_Github/NOBO Survival/Date_lookuptable.csv")
+lookuptable1 <- read.csv("./Date_lookuptable.csv")
 head(lookuptable1) # the intervals column is 4 day intervals starting from April 1st 
 # until the max calendar day of a brood/nest for both years (Approximately oct 21) 
 

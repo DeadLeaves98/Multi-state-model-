@@ -20,7 +20,7 @@ library(rgdal); library(raster); library(adehabitatHR); library(rgeos); library(
 library(lubridate); library(stringr); library(hablar); library(AICcmodavg);  library(lme4)
 nobo1 <- read.csv("./Orton_Bobwhite_Telemetry_Data_Entry_0.csv")
 head(nobo1)
-nrow(nobo1) # 38810
+nrow(nobo1) # 38809
 
 #### Remove chicks ---- 
 # clean this file up by removing the columns we do not need

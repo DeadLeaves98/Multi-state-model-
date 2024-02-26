@@ -402,11 +402,17 @@ nrow(nobo3) #25976
 # then repeat this for broods 
 
 nests = read.csv("./Nest.csv")
+head(nests)
+# remove all unnecessary columns 
+nests = dplyr::select(nests, "Bird.ID", "Date.Found", "Fate.Date")
+#fix the date columns 
+nests1 <- nests %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")) # automatically removes the time 
+nests1 <- nests1 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y"))
+
+# now to make it all one row for a bird if it has multiple nests 
 
 
-
-
-pivot_wider(DF, names_from = "time", values_from = x)
+pivot_wider(nests, names_from = "time", values_from = x)
 
 
 

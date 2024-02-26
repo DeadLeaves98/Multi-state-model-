@@ -16,6 +16,8 @@
 #                             Data Cleaning ----
 ##############################################################################
 library(dplyr); library(stringr); library(lubridate); library(tidyr); library(sf)
+library(rgdal); library(raster); library(adehabitatHR); library(rgeos); library(sf); library(dplyr)
+library(lubridate); library(stringr); library(hablar); library(AICcmodavg);  library(lme4)
 nobo1 <- read.csv("./Orton_Bobwhite_Telemetry_Data_Entry_0.csv")
 head(nobo1)
 nrow(nobo1) # 38810
@@ -388,15 +390,47 @@ nobo3$Bird.ID = str_c(nobo3$Bird.ID, '_', nobo3$year.x)
 #### For() loop that creates input file
 birdlist <- unique(nobo3$Bird.ID) # the list of birds to be processed
 length(unique(nobo3$Bird.ID)) # how many? n = 694
-nobo3 <- nobo3[order(nobo3$Date),] # reorder by year
-#nobo3 <- nobo3[order(nobo3$intervals),] # then reorder by week
+nobo3 <- nobo3[order(nobo3$Date),] # reorder by date
 length(unique(nobo3$intervals)) #51
 max(nobo3$intervals)
 nrow(nobo3) #25976
 
+ # i want t create an if else statement that will essentially fix the current issues of 
+# entry errors (e.g. swtching to states when the bird has not actually switched ) 
+# using the nest file i can use the date found and the fate date column.. if it lies between these dates it will 
+# be a N0. if not, stays the same. 
+# then repeat this for broods 
+
+nests = read.csv("./Nest.csv")
+
+
+
+
+pivot_wider(DF, names_from = "time", values_from = x)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # to check specific birds 
 x = subset(nobo3, Bird.ID == "166.346_204659")
-courses <- readOGR("E:/NOBO Project Data/Analyses/Breeding Season/Summer 2023/Adult/shapefiles/OrtonCourses.shp")
+courses <- readOGR("./OrtonCourses.shp")
 
 # 53 intervals within the breeding season 
 

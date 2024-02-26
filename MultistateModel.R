@@ -410,11 +410,59 @@ nests1 <- nests %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")
 nests1 <- nests1 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y"))
 
 # now to make it all one row for a bird if it has multiple nests 
+# Idea: add a nest# column. subset into nests 1 and nests 2 with different start and end dates 
+#   then bind it back together based on bird id
+new.df <- nests1 %>%  # indexs the occurance of each bird.id as they appear in the dataset 
+  group_by(Bird.ID) %>% 
+  mutate(Index=1:n()) # this is more so that i can keep track down the road 
 
+# split up by nest# 
+nest.1 = subset(new.df, Index == '1')  # first nests 
+max(nest.1$Index)
+nest.2 = subset(new.df, Index == '2') #second nests 
+max(nest.2$Index)
+nest.3 = subset(new.df, Index == '3') # third nests 
 
-pivot_wider(nests, names_from = "time", values_from = x)
+max(new.df$Index) # no more than 3 nests in a season so we are gucci 
 
+head(nest.1)
+nest.1$Nest.1.Found = nest.1$Date.Found
+nest.1$Nest.1.Fate = nest.1$Fate.Date
 
+nest.2$Nest.2.Found = nest.2$Date.Found
+nest.2$Nest.2.Fate = nest.2$Fate.Date
+
+nest.3$Nest.3.Found = nest.3$Date.Found
+nest.3$Nest.3.Fate = nest.3$Fate.Date
+
+nest.1 = dplyr::select(nest.1, "Bird.ID", "Nest.1.Found", "Nest.1.Fate")
+nrow(nest.1) # 137
+nest.2 = dplyr::select(nest.2, "Bird.ID", "Nest.2.Found", "Nest.2.Fate")
+nrow(nest.2) # 35
+nest.3 = dplyr::select(nest.3, "Bird.ID", "Nest.3.Found", "Nest.3.Fate")
+nrow(nest.3) # 1 
+
+test_merge = merge(nest.1, nest.2, by = "Bird.ID", all = TRUE)
+
+test_merge1 = merge(test_merge, nest.3, by = "Bird.ID", all = TRUE) #
+
+##################################################################################
+##################################################################################
+##################################################################################
+
+################ leaving off here ----------
+# next steps. add in the 2022 nest data into this... 
+# then rerun this portion with the new nest data ... 
+
+# then merge based off bird.id to the og telemetry file 
+
+# if the date of observation falls between this and this date then it is a N0 
+View(test_merge1)
+# create an ifelse statement. 
+# IF the observation based on the column bird.id fall between the Start.Date and Fate.Date column for that specific bird id 
+# then it will be given an NO, if not it stays the same
+# If this doesnt wrk out due to multiple rows with same bird.id in the nest data split the nest data into 3 
+# and then do the ifelse statement 3 times 
 
 
 

@@ -401,7 +401,7 @@ nrow(nobo3) #25976
 # be a N0. if not, stays the same. 
 # then repeat this for broods 
 
-nests = read.csv("./Nest.csv")
+nest2023 = read.csv("./Nest.csv") # Nest data for 2023 
 head(nests)
 # remove all unnecessary columns 
 nests = dplyr::select(nests, "Bird.ID", "Date.Found", "Fate.Date")

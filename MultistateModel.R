@@ -401,14 +401,21 @@ nrow(nobo3) #25976
 # be a N0. if not, stays the same. 
 # then repeat this for broods 
 
-nest2023 = read.csv("./Nest.csv") # Nest data for 2023 
+nests2023 = read.csv("./Nest.csv") # Nest data for 2023 
+nests2022 = read.csv("./Nest22.csv") # Nest data for 2022 
+head(nests2022) # this is from my own data records -- not using therons -- therefore the file looks a bit different than the "Form_5" 
+head (nests2023) # from form_5 sent by theron 
 head(nests)
 # remove all unnecessary columns 
-nests = dplyr::select(nests, "Bird.ID", "Date.Found", "Fate.Date")
+nests2023 = dplyr::select(nests2023, "Bird.ID", "Date.Found", "Fate.Date")
 #fix the date columns 
-nests1 <- nests %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")) # automatically removes the time 
-nests1 <- nests1 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y"))
+nests1 <- nests2023 %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")) # Found date; automatically removes the time 
+nests2023 <- nests1 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y")) # fate date 
 
+nests2022 = nests2022 %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")) # found date
+nests2022 <- nests2022 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y"))# Fate Date 
+
+nests1 = rbind(nests2022, nests2023)
 # now to make it all one row for a bird if it has multiple nests 
 # Idea: add a nest# column. subset into nests 1 and nests 2 with different start and end dates 
 #   then bind it back together based on bird id
@@ -426,25 +433,54 @@ nest.3 = subset(new.df, Index == '3') # third nests
 max(new.df$Index) # no more than 3 nests in a season so we are gucci 
 
 head(nest.1)
-nest.1$Nest.1.Found = nest.1$Date.Found
-nest.1$Nest.1.Fate = nest.1$Fate.Date
+nest.1$Nest.1.Found = nest.1$Date.Found # create a new column for 1st nest attempt date found 
+nest.1$Nest.1.Fate = nest.1$Fate.Date # create a new column for 1st nest attempt date fate 
 
-nest.2$Nest.2.Found = nest.2$Date.Found
-nest.2$Nest.2.Fate = nest.2$Fate.Date
+nest.2$Nest.2.Found = nest.2$Date.Found # create a new column for 2nd nest attempt date found 
+nest.2$Nest.2.Fate = nest.2$Fate.Date # create a new column for 2nd nest attempt date fate 
 
-nest.3$Nest.3.Found = nest.3$Date.Found
-nest.3$Nest.3.Fate = nest.3$Fate.Date
+nest.3$Nest.3.Found = nest.3$Date.Found # create a new column for 3rd nest attempt date found 
+nest.3$Nest.3.Fate = nest.3$Fate.Date # create a new column for 3rd nest attempt date fate
 
-nest.1 = dplyr::select(nest.1, "Bird.ID", "Nest.1.Found", "Nest.1.Fate")
+nest.1 = dplyr::select(nest.1, "Bird.ID", "Nest.1.Found", "Nest.1.Fate") # select for these columns specifically 
 nrow(nest.1) # 137
-nest.2 = dplyr::select(nest.2, "Bird.ID", "Nest.2.Found", "Nest.2.Fate")
+nest.2 = dplyr::select(nest.2, "Bird.ID", "Nest.2.Found", "Nest.2.Fate") # select for these columns specifically
 nrow(nest.2) # 35
-nest.3 = dplyr::select(nest.3, "Bird.ID", "Nest.3.Found", "Nest.3.Fate")
+nest.3 = dplyr::select(nest.3, "Bird.ID", "Nest.3.Found", "Nest.3.Fate") # select for these columns specifically
 nrow(nest.3) # 1 
 
 test_merge = merge(nest.1, nest.2, by = "Bird.ID", all = TRUE)
 
-test_merge1 = merge(test_merge, nest.3, by = "Bird.ID", all = TRUE) #
+test_merge1 = merge(test_merge, nest.3, by = "Bird.ID", all = TRUE) # a dataframe that holds all nest attempt inititation dates and fate dates with each row a new bird 
+# View(test_merge1)
+
+test_merge1$State = "N0"
+head(test_merge1) # nests themselves 
+
+# What i am trying to do. 
+# I want to create code that will let me use the date of the observation and bird is to lookup dates 
+# screams 
+
+library(data.table)
+nobo3$Date = ymd(nobo3$Date, truncated = 1)
+head(nobo3)
+class(test_merge1$Nest.1.Found)
+class(nobo3$Date)
+
+x = left_join()
+
+
+
+
+
+
+
+# how to have data cycle through using a vlookup table based on bird id and if that point 
+
+
+
+
+
 
 ##################################################################################
 ##################################################################################

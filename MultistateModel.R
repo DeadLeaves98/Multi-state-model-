@@ -415,6 +415,12 @@ nests2023 <- nests1 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y
 nests2022 = nests2022 %>% mutate(Date.Found = as.Date(Date.Found, format = "%m/%d/%Y")) # found date
 nests2022 <- nests2022 %>% mutate(Fate.Date = as.Date(Fate.Date, format = "%m/%d/%Y"))# Fate Date 
 
+nests2023$YEAR = 2023
+nests2023$Bird.ID = paste(nests2023$Bird.ID, nests2023$YEAR, sep = "_")
+
+nests2022$YEAR = 2022
+nests2022$Bird.ID = paste(nests2022$Bird.ID, nests2022$YEAR, sep = "_")
+
 nests1 = rbind(nests2022, nests2023)
 # now to make it all one row for a bird if it has multiple nests 
 # Idea: add a nest# column. subset into nests 1 and nests 2 with different start and end dates 
@@ -467,54 +473,51 @@ head(nobo3)
 class(test_merge1$Nest.1.Found)
 class(nobo3$Date)
 
-x = left_join()
+#nobo3 = merge(nobo3, test_merge1, by = "Bird.ID", all = TRUE)
+
+# state.x is the actual state column 
+
+library(dplyr)
+library(cleaner)
+dat <- inner_join(nobo3, test_merge1, by = "Bird.ID")
+
+# 2nd nests  Found column
+#replacing NA with an insignificant pseudodate placeholder for NA values 
+dat = dat %>% 
+  na_replace(Nest.2.Found, replacement = "1998-07-28") 
+# 2nd nests   Fate column 
+dat = dat %>% 
+  na_replace(Nest.2.Fate, replacement = "1998-07-29") 
+# 3rd nests  Found column
+dat = dat %>% 
+  na_replace(Nest.3.Found, replacement = "1998-07-28") 
+# 2nd nests   Fate column 
+dat = dat %>% 
+  na_replace(Nest.3.Fate, replacement = "1998-07-29") 
+
+# if the date is between  the value in the 'nest.1.found' and the 'nest.1.fate' 
+# give it a 1, if not, give it a 0.
+dat = dat %>% #for 1st nests
+  mutate(match1 = ifelse(between(Date, Nest.1.Found, Nest.1.Fate), 1, 0)) # anything in the match col labelled nest was a nest during this time. 
+dat = dat %>%  # for 2nd nests 
+  mutate(match2 = ifelse(between(Date, Nest.2.Found, Nest.2.Fate), 1, 0)) 
+dat = dat %>% # for 3rd nests
+  mutate(match3 = ifelse(between(Date, Nest.3.Found, Nest.3.Fate), 1, 0))
+
+# If there is a 1 in any of the last three columns then put a 'N0' in the state.x 
+# column 
+ 
+dat$State.x = ifelse(dat$match1 == 1, 'N0', dat$State.x)
+dat$State.x = ifelse(dat$match2 == 1, 'N0', dat$State.x)
+dat$State.x = ifelse(dat$match3 == 1, 'N0', dat$State.x)
 
 
+# Now to do this for broods.... fuck.... 
 
-
-
-
-
-# how to have data cycle through using a vlookup table based on bird id and if that point 
-
-
-
-
-
-
+##### LEFT OFF HERE ########
 ##################################################################################
 ##################################################################################
 ##################################################################################
-
-################ leaving off here ----------
-# next steps. add in the 2022 nest data into this... 
-# then rerun this portion with the new nest data ... 
-
-# then merge based off bird.id to the og telemetry file 
-
-# if the date of observation falls between this and this date then it is a N0 
-View(test_merge1)
-# create an ifelse statement. 
-# IF the observation based on the column bird.id fall between the Start.Date and Fate.Date column for that specific bird id 
-# then it will be given an NO, if not it stays the same
-# If this doesnt wrk out due to multiple rows with same bird.id in the nest data split the nest data into 3 
-# and then do the ifelse statement 3 times 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
